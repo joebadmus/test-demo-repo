@@ -28,13 +28,21 @@ pipeline {
                                 mkdir -p /shared/.docker
 
                                 # Create Docker config.json manually for Kaniko
-                                echo '{' | tee /shared/.docker/config.json
-                                echo '  "auths": {' | tee -a /shared/.docker/config.json
-                                echo '    "https://${ACR_NAME}.azurecr.io": {' | tee -a /shared/.docker/config.json
-                                echo '      "identitytoken": "'"\$TOKEN"'"' | tee -a /shared/.docker/config.json
-                                echo '    }' | tee -a /shared/.docker/config.json
-                                echo '  }' | tee -a /shared/.docker/config.json
-                                echo '}' | tee -a /shared/.docker/config.json
+
+                                  # Use printf to properly format JSON and escape special characters
+                                printf '{\n  "auths": {\n    "https://%s.azurecr.io": {\n      "identitytoken": "%s"\n    }\n  }\n}\n' \
+                                "${ACR_NAME}" "\$TOKEN" > /shared/.docker/config.json
+
+                                
+                                // echo '{' | tee /shared/.docker/config.json
+                                // echo '  "auths": {' | tee -a /shared/.docker/config.json
+                                // echo '    "https://${ACR_NAME}.azurecr.io": {' | tee -a /shared/.docker/config.json
+                                // echo '      "identitytoken": "'"\$TOKEN"'"' | tee -a /shared/.docker/config.json
+                                // echo '    }' | tee -a /shared/.docker/config.json
+                                // echo '  }' | tee -a /shared/.docker/config.json
+                                // echo '}' | tee -a /shared/.docker/config.json
+
+
                                 // cat <<EOF > /shared/.docker/config.json
                                 // {
                                 //     "auths": {
