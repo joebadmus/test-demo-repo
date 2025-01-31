@@ -29,11 +29,17 @@ pipeline {
 
                                 # Create Docker config.json manually for Kaniko
 
+                                # Ensure token is properly retrieved
+                                if [ -z "\$TOKEN" ]; then
+                                    echo "Error: Failed to retrieve ACR token"
+                                    exit 1
+                                fi
+
                                   # Use printf to properly format JSON and escape special characters
                                 printf '{\n  "auths": {\n    "https://%s.azurecr.io": {\n      "identitytoken": "%s"\n    }\n  }\n}\n' \
                                 "${ACR_NAME}" "\$TOKEN" > /shared/.docker/config.json
 
-                                
+
                                 // echo '{' | tee /shared/.docker/config.json
                                 // echo '  "auths": {' | tee -a /shared/.docker/config.json
                                 // echo '    "https://${ACR_NAME}.azurecr.io": {' | tee -a /shared/.docker/config.json
