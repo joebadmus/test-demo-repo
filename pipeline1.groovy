@@ -28,17 +28,24 @@ pipeline {
                                 mkdir -p /shared/.docker
 
                                 # Create Docker config.json manually for Kaniko
-                                cat <<EOF > /shared/.docker/config.json
-                                {
-                                    "auths": {
-                                        "https://${ACR_NAME}.azurecr.io": {
-                                            "auth": "$(echo -n "00000000:${TOKEN}" | base64 -w0)"
-                                        }
-                                    }
-                                }
-                                EOF
+                                echo '{' | tee /shared/.docker/config.json
+                                echo '  "auths": {' | tee -a /shared/.docker/config.json
+                                echo '    "https://${ACR_NAME}.azurecr.io": {' | tee -a /shared/.docker/config.json
+                                echo '      "identitytoken": "'"\$TOKEN"'"' | tee -a /shared/.docker/config.json
+                                echo '    }' | tee -a /shared/.docker/config.json
+                                echo '  }' | tee -a /shared/.docker/config.json
+                                echo '}' | tee -a /shared/.docker/config.json
+                                // cat <<EOF > /shared/.docker/config.json
+                                // {
+                                //     "auths": {
+                                //         "https://${ACR_NAME}.azurecr.io": {
+                                //             "auth": "$(echo -n "00000000:${TOKEN}" | base64 -w0)"
+                                //         }
+                                //     }
+                                // }
+                                // EOF
                                 
-                                echo "Docker config.json created successfully!"
+                                // echo "Docker config.json created successfully!"
                             """
                         }
                     }
